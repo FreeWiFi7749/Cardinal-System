@@ -3,20 +3,21 @@
 import discord
 from discord.ext import commands
 import asyncio
-from decouple import config
+import os
+from dotenv import load_dotenv
 
 INITAL_EXTENSIONS = [
     "cogs.vps_status_cog",
 ]
 
-DISCORD_TOKEN = config('DISCORD_TOKEN')
+load_dotenv()
+TOKEN = os.getenv('BOT_TOKEN')
 
 class DiscordBot(commands.Bot):
-    def __init__(self, intents: discord.Intents, help_command=None, command_prefix: str):
+    def __init__(self, intents: discord.Intents, help_command=None):
         super().__init__(
             intents=intents,
             help_command=help_command,
-            command_prefix=command_prefix
         )
     
     async def setup_hook(self):
@@ -25,7 +26,7 @@ class DiscordBot(commands.Bot):
         return await super().setup_hook()
 
 intents = discord.Intents.all()
-bot = DiscordBot(intents=intents, command_prefix="c/")
+bot = commands.Bot(command_prefix="c/", intents=intents)
 
 @bot.event
 async def on_ready():
@@ -34,4 +35,4 @@ async def on_ready():
 if __name__ == "__main__":
     for cog in INITAL_EXTENSIONS:
         bot.load_extension(cog)
-    bot.run(DISCORD_TOKEN)
+    bot.run(TOKEN)
