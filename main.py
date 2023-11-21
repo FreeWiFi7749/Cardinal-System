@@ -6,10 +6,12 @@ import os
 from dotenv import load_dotenv
 from cogs.vps_status_cog import VPSStatus
 #from cogs.calender_cog import CalendarCog
+from cogs.bump import BumpCog
 
 INITAL_EXTENSIONS = [
     "cogs.vps_status_cog",
     #"cogs.calender_cog",
+    "cogs.bump"
 ]
 
 load_dotenv()
@@ -34,6 +36,7 @@ bot = commands.Bot(command_prefix="c/", intents=intents)
 async def on_ready():
     await bot.tree.sync()
     await bot.add_cog(VPSStatus(bot))
+    await bot.add_cog(BumpCog(bot))
     #await bot.add_cog(CalendarCog(bot))
     print("Logged in!")
 
@@ -49,6 +52,11 @@ async def _reload(ctx, cog_name: str):
         await ctx.send(f'{cog_name} はまだロードされていません。')
     except Exception as e:
         await ctx.send(f'{cog_name} のリロード中にエラーが発生しました：{e}')
+
+@bot.hybrid_command(name='statuspages')
+@commands.is_owner()
+async def _statuspages(ctx):
+    await ctx.send("[ステータスページ](https://status.the-seed.games)")
 
 if __name__ == "__main__":
     for cog in INITAL_EXTENSIONS:
